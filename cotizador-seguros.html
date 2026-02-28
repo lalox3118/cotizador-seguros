@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cotizar Seguro – Leandro Sanchez</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #2b2d3a;
+    --darker: #1e202b;
+    --silver: #b0b5c0;
+    --silver-light: #d4d8e0;
+    --white: #f0f2f5;
+    --accent: #c8cdd6;
+    --border: rgba(176,181,192,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--darker);
+    min-height: 100vh;
+    font-family: 'Raleway', sans-serif;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    background-image: radial-gradient(ellipse at 70% 20%, rgba(180,185,200,0.06) 0%, transparent 60%),
+                      radial-gradient(ellipse at 20% 80%, rgba(100,105,130,0.08) 0%, transparent 50%);
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  .logo-mark {
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
+  .logo-mark svg {
+    width: 56px;
+    height: 56px;
+    filter: drop-shadow(0 4px 16px rgba(180,185,200,0.18));
+  }
+
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--white);
+  }
+
+  .brand-name span {
+    color: var(--silver);
+  }
+
+  .brand-sub {
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+    color: var(--silver);
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  /* Card */
+  .card {
+    background: rgba(43,45,58,0.85);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2.5rem 2.5rem 2rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+    animation: fadeUp 0.7s 0.15s ease both;
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--silver-light);
+    margin-bottom: 0.3rem;
+  }
+
+  .card-desc {
+    font-size: 0.78rem;
+    color: var(--silver);
+    letter-spacing: 0.08em;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Vehicle selector */
+  .vehicle-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .vehicle-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1rem 0.5rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.25s ease;
+    color: var(--silver);
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .vehicle-btn svg {
+    display: block;
+    margin: 0 auto 0.5rem;
+    width: 28px;
+    height: 28px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: all 0.25s ease;
+  }
+
+  .vehicle-btn:hover {
+    border-color: var(--silver);
+    background: rgba(176,181,192,0.07);
+    color: var(--white);
+  }
+
+  .vehicle-btn.active {
+    border-color: var(--silver-light);
+    background: rgba(176,181,192,0.14);
+    color: var(--white);
+    box-shadow: 0 0 20px rgba(176,181,192,0.1);
+  }
+
+  /* Form fields */
+  .form-group {
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    animation: none;
+  }
+
+  .form-group.visible {
+    animation: fadeUp 0.4s ease both;
+  }
+
+  label {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  input, select {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.8rem 1rem;
+    color: var(--white);
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    outline: none;
+    transition: border-color 0.2s ease, background 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input::placeholder { color: rgba(176,181,192,0.4); }
+
+  input:focus, select:focus {
+    border-color: var(--silver);
+    background: rgba(255,255,255,0.07);
+  }
+
+  select option {
+    background: var(--darker);
+    color: var(--white);
+  }
+
+  .select-wrapper {
+    position: relative;
+  }
+
+  .select-wrapper::after {
+    content: '';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--silver);
+    pointer-events: none;
+  }
+
+  .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* Cobertura cards */
+  .cobertura-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .cob-option {
+    position: relative;
+  }
+
+  .cob-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .cob-label {
+    display: block;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.9rem 1rem;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--silver);
+  }
+
+  .cob-label .cob-name {
+    display: block;
+    color: var(--white);
+    font-size: 0.82rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .cob-label .cob-desc {
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--silver);
+  }
+
+  .cob-option input[type="radio"]:checked + .cob-label {
+    border-color: var(--silver-light);
+    background: rgba(176,181,192,0.12);
+    box-shadow: 0 0 20px rgba(176,181,192,0.08);
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.8rem 0;
+  }
+
+  .gnc-toggle {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .gnc-btn {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.75rem;
+    color: var(--silver);
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+
+  .gnc-btn:hover {
+    border-color: var(--silver);
+    color: var(--white);
+  }
+
+  .gnc-btn.active {
+    border-color: var(--silver-light);
+    background: rgba(176,181,192,0.14);
+    color: var(--white);
+  }
+
+  .patente-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .patente-input {
+    flex: 1;
+  }
+
+  .zerokm-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 0.8rem 1rem;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    transition: all 0.22s ease;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--silver);
+    text-transform: uppercase;
+  }
+
+  .zerokm-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .zerokm-box {
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--silver);
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .zerokm-label input[type="checkbox"]:checked ~ .zerokm-box {
+    background: var(--silver-light);
+    border-color: var(--silver-light);
+  }
+
+  .zerokm-label input[type="checkbox"]:checked ~ .zerokm-box::after {
+    content: '✓';
+    font-size: 10px;
+    color: var(--darker);
+    font-weight: 700;
+  }
+
+  .zerokm-label:has(input:checked) {
+    border-color: var(--silver-light);
+    background: rgba(176,181,192,0.12);
+    color: var(--white);
+  }
+
+  /* Submit */
+  .submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, rgba(176,181,192,0.22), rgba(176,181,192,0.1));
+    border: 1px solid var(--silver);
+    border-radius: 3px;
+    padding: 1rem;
+    color: var(--white);
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.28s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+    opacity: 0;
+    transition: opacity 0.28s ease;
+  }
+
+  .submit-btn:hover::before { opacity: 1; }
+  .submit-btn:hover {
+    border-color: var(--silver-light);
+    box-shadow: 0 8px 32px rgba(176,181,192,0.18);
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:active { transform: translateY(0); }
+
+  /* Success */
+  .success-msg {
+    display: none;
+    text-align: center;
+    padding: 2rem 1rem;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .success-msg .check {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .success-msg h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    color: var(--silver-light);
+    margin-bottom: 0.5rem;
+  }
+
+  .success-msg p {
+    font-size: 0.82rem;
+    color: var(--silver);
+    line-height: 1.7;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.68rem;
+    color: rgba(176,181,192,0.4);
+    letter-spacing: 0.1em;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 480px) {
+    .card { padding: 1.8rem 1.4rem 1.5rem; }
+    .row-2 { grid-template-columns: 1fr; }
+    .cobertura-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-mark">
+      <!-- Simplified L mark as SVG -->
+      <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="8" width="8" height="36" fill="#b0b5c0"/>
+        <rect x="10" y="36" width="28" height="8" fill="#b0b5c0"/>
+        <rect x="22" y="16" width="6" height="26" fill="#8a8f9a"/>
+        <rect x="22" y="34" width="20" height="6" fill="#8a8f9a"/>
+      </svg>
+    </div>
+    <div class="brand-name">Leandro <span>Sanchez</span></div>
+    <div class="brand-sub">Asesor de Seguros</div>
+  </div>
+
+  <!-- Card -->
+  <div class="card">
+    <div id="formContent">
+      <div class="card-title">Cotizá tu Seguro</div>
+      <div class="card-desc">Completá los datos y recibí una cotización personalizada</div>
+
+      <!-- Vehicle type -->
+      <label>Tipo de vehículo</label>
+      <div class="vehicle-selector" id="vehicleSelector">
+        <button type="button" class="vehicle-btn active" data-type="auto">
+          <!-- Car icon -->
+          <svg viewBox="0 0 24 24"><path d="M5 17H3v-5l2.5-6h13L21 12v5h-2"/><rect x="7" y="17" width="3" height="2" rx="1"/><rect x="14" y="17" width="3" height="2" rx="1"/><path d="M5 12h14"/></svg>
+          Auto
+        </button>
+        <button type="button" class="vehicle-btn" data-type="moto">
+          <!-- Moto icon -->
+          <svg viewBox="0 0 24 24"><circle cx="5" cy="16" r="3"/><circle cx="19" cy="16" r="3"/><path d="M5 13l3-5h5l3 5"/><path d="M14 8l1-3h3"/><path d="M8 13h6"/></svg>
+          Moto
+        </button>
+        <button type="button" class="vehicle-btn" data-type="bicicleta">
+          <!-- Bike icon -->
+          <svg viewBox="0 0 24 24"><circle cx="5" cy="17" r="3"/><circle cx="19" cy="17" r="3"/><path d="M9 17l2-5h4l2 5"/><path d="M12 12V7l3-2"/><circle cx="12" cy="7" r="1"/></svg>
+          Bicicleta
+        </button>
+      </div>
+
+      <form id="quoteForm" novalidate>
+        <input type="hidden" name="tipo_vehiculo" id="tipoVehiculo" value="auto">
+
+        <!-- Datos del vehículo -->
+        <div class="row-2">
+          <div class="form-group visible" style="animation-delay:0.05s">
+            <label for="marca">Marca</label>
+            <input type="text" id="marca" name="marca" placeholder="Ej: Toyota, Zanella…" required>
+          </div>
+          <div class="form-group visible" style="animation-delay:0.1s">
+            <label for="modelo">Modelo</label>
+            <input type="text" id="modelo" name="modelo" placeholder="Ej: Corolla, Patagonian…" required>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group visible" style="animation-delay:0.15s">
+            <label for="anio">Año</label>
+            <div class="select-wrapper">
+              <select id="anio" name="anio" required>
+                <option value="">Seleccioná</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group visible" style="animation-delay:0.2s">
+            <label for="uso">Uso</label>
+            <div class="select-wrapper">
+              <select id="uso" name="uso" required>
+                <option value="">Seleccioná</option>
+                <option value="particular">Particular</option>
+                <option value="comercial">Comercial</option>
+                <option value="remis">Remis / Uber</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Patente / 0km -->
+        <div class="form-group visible" id="patenteGroup" style="animation-delay:0.22s">
+          <label>Patente</label>
+          <div class="patente-row">
+            <input type="text" id="patente" name="patente" placeholder="Ej: AB 123 CD" maxlength="10" style="text-transform:uppercase" class="patente-input" id="patenteInput">
+            <label class="zerokm-label" id="zeroKmLabel">
+              <input type="checkbox" id="ceroKm" name="cero_km" value="si">
+              <span class="zerokm-box"></span>
+              <span class="zerokm-text">0 km</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Cobertura -->
+        <div class="form-group visible" style="animation-delay:0.25s">
+          <label>Cobertura</label>
+          <div class="cobertura-grid">
+            <div class="cob-option">
+              <input type="radio" name="cobertura" id="cob1" value="terceros" checked>
+              <label class="cob-label" for="cob1">
+                <span class="cob-name">Responsabilidad Civil</span>
+                <span class="cob-desc">Daños a terceros</span>
+              </label>
+            </div>
+            <div class="cob-option">
+              <input type="radio" name="cobertura" id="cob2" value="terceros_completo">
+              <label class="cob-label" for="cob2">
+                <span class="cob-name">Terceros Completo</span>
+                <span class="cob-desc">RC + robo + incendio</span>
+              </label>
+            </div>
+            <div class="cob-option">
+              <input type="radio" name="cobertura" id="cob3" value="todo_riesgo_franquicia">
+              <label class="cob-label" for="cob3">
+                <span class="cob-name">Todo Riesgo</span>
+                <span class="cob-desc">Con franquicia</span>
+              </label>
+            </div>
+            <div class="cob-option" id="cobRoboTotal" style="display:none">
+              <input type="radio" name="cobertura" id="cob4" value="robo_total">
+              <label class="cob-label" for="cob4">
+                <span class="cob-name">Robo Total</span>
+                <span class="cob-desc">Robo de bicicleta</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- GNC -->
+        <div class="form-group visible" id="gncGroup" style="animation-delay:0.28s; margin-top:-0.5rem">
+          <label>¿El vehículo tiene GNC?</label>
+          <div class="gnc-toggle">
+            <button type="button" class="gnc-btn active" id="gncNo" data-val="no">No</button>
+            <button type="button" class="gnc-btn" id="gncSi" data-val="si">Sí</button>
+          </div>
+          <input type="hidden" name="gnc" id="gncInput" value="no">
+        </div>
+
+        <div class="divider"></div>
+        <div class="row-2">
+          <div class="form-group visible" style="animation-delay:0.3s">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required>
+          </div>
+          <div class="form-group visible" style="animation-delay:0.35s">
+            <label for="apellido">Apellido</label>
+            <input type="text" id="apellido" name="apellido" placeholder="Tu apellido" required>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group visible" style="animation-delay:0.4s">
+            <label for="telefono">Teléfono</label>
+            <input type="tel" id="telefono" name="telefono" placeholder="+54 341 …" required>
+          </div>
+          <div class="form-group visible" style="animation-delay:0.45s">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+          </div>
+        </div>
+
+        <div class="form-group visible" style="animation-delay:0.5s; margin-top:0.5rem">
+          <button type="submit" class="submit-btn">Solicitar Cotización</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Success -->
+    <div class="success-msg" id="successMsg">
+      <div class="check">✦</div>
+      <h3>¡Solicitud Recibida!</h3>
+      <p>Gracias por tu consulta.<br>Leandro Sanchez te contactará a la brevedad<br>con tu cotización personalizada.</p>
+    </div>
+  </div>
+
+  <div class="footer">© 2025 Leandro Sanchez · Asesor de Seguros</div>
+</div>
+
+<script>
+  // Populate year select
+  const anioSelect = document.getElementById('anio');
+  const currentYear = new Date().getFullYear();
+  for (let y = currentYear; y >= 1990; y--) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = y;
+    anioSelect.appendChild(opt);
+  }
+
+  // Vehicle type toggle
+  const vehicleBtns = document.querySelectorAll('.vehicle-btn');
+  const tipoInput = document.getElementById('tipoVehiculo');
+
+  vehicleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      vehicleBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      tipoInput.value = btn.dataset.type;
+
+      // Show/hide options based on vehicle type
+      const cob1 = document.getElementById('cob1').closest('.cob-option');
+      const cob2 = document.getElementById('cob2').closest('.cob-option');
+      const cob3 = document.getElementById('cob3').closest('.cob-option');
+      const cobRoboTotal = document.getElementById('cobRoboTotal');
+      if (btn.dataset.type === 'bicicleta') {
+        cob1.style.display = 'none';
+        cob2.style.display = 'none';
+        cob3.style.display = 'none';
+        cobRoboTotal.style.display = 'block';
+        document.getElementById('cob4').checked = true;
+      } else {
+        cob1.style.display = 'block';
+        cob2.style.display = 'block';
+        cob3.style.display = 'block';
+        cobRoboTotal.style.display = 'none';
+        document.getElementById('cob1').checked = true;
+      }
+
+      // Show/hide patente for auto/moto only
+      const patenteGroup = document.getElementById('patenteGroup');
+      patenteGroup.style.display = btn.dataset.type === 'bicicleta' ? 'none' : 'block';
+      const gncGroup = document.getElementById('gncGroup');
+      gncGroup.style.display = btn.dataset.type === 'auto' ? 'block' : 'none';
+    });
+  });
+
+  // 0km toggle disables patente input
+  document.getElementById('ceroKm').addEventListener('change', function() {
+    const patenteInput = document.getElementById('patente');
+    if (this.checked) {
+      patenteInput.value = '';
+      patenteInput.disabled = true;
+      patenteInput.placeholder = 'Sin patente asignada';
+      patenteInput.style.opacity = '0.4';
+    } else {
+      patenteInput.disabled = false;
+      patenteInput.placeholder = 'Ej: AB 123 CD';
+      patenteInput.style.opacity = '1';
+    }
+  });
+
+  // GNC toggle
+  document.querySelectorAll('.gnc-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.gnc-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('gncInput').value = btn.dataset.val;
+    });
+  });
+
+  // Form submit
+  document.getElementById('quoteForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    // Validate required fields
+    const required = this.querySelectorAll('[required]');
+    let valid = true;
+    required.forEach(el => {
+      if (!el.value.trim()) {
+        valid = false;
+        el.style.borderColor = 'rgba(200,120,120,0.7)';
+        el.addEventListener('input', () => el.style.borderColor = '', { once: true });
+      }
+    });
+    if (!valid) return;
+
+    // Show success
+    document.getElementById('formContent').style.display = 'none';
+    const msg = document.getElementById('successMsg');
+    msg.style.display = 'block';
+  });
+</script>
+</body>
+</html>
